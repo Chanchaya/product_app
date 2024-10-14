@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:product_app1/screens/product_add_screen.dart';
+import 'package:product_app1/screens/product_list_screen.dart';
 import '../services/product_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -83,6 +84,8 @@ class _ProductUpdateScreenState extends State<ProductUpdateScreen> {
               SizedBox(
                 height: 20,
               ),
+
+// แก้ไขข้อมูล
               ElevatedButton.icon(
                   onPressed: () async {
                     if (_image != null) {
@@ -99,7 +102,7 @@ class _ProductUpdateScreenState extends State<ProductUpdateScreen> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ProductAddScreen()),
+                              builder: (context) => ProductListScreen()),
                         );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -111,7 +114,34 @@ class _ProductUpdateScreenState extends State<ProductUpdateScreen> {
                   },
                   label: Text('แก้ไขข้อมูล')),
 
-              ElevatedButton.icon(onPressed: () {}, label: Text('ลบข้อมูล'))
+// ลบข้อมูล
+              ElevatedButton.icon(
+                  onPressed: () async {
+                    if (_image != null) {
+                      String proname = _pronameController.text;
+                      double price = double.parse(_priceController.text);
+//เรียกใช8 api เพื่อเพิ่มข8อมูลใหมK
+                      final upload = await _productService
+                          .deleteProduct(widget.productData['proId']);
+//ตรวจสอบตัวแปร upload
+                      if (upload != null) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('สําเร็จ'),
+                        ));
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ProductListScreen()),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          backgroundColor: Color.fromARGB(255, 255, 149, 0),
+                          content: Text('ผิดพลาด'),
+                        ));
+                      }
+                    }
+                  },
+                  label: Text('ลบข้อมูล'))
             ],
           ),
         ),

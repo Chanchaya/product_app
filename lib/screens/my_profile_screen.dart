@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:product_app1/screens/product_list_screen.dart';
 import 'package:product_app1/screens/product_view_screen.dart';
 
 class MyProfileScreen extends StatelessWidget {
@@ -8,24 +9,24 @@ class MyProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(''),
+        title: Text('Product App'),
       ),
       body: Center(
         child: Column(
           children: [
-            //ชื่อ
-            //
-            //
-
+            Text(
+              'ชัญชญา ตั้งเกษมสุข',
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            ),
             ElevatedButton.icon(
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ProductViewScreen()),
+                        builder: (context) => ProductListScreen()),
                   );
                 },
-                label: Text('แก้ไขข้อมูล'))
+                label: Text('แสดงรายการสินค้า'))
           ],
         ),
       ),

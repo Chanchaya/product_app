@@ -4,9 +4,9 @@ import 'package:http/http.dart' as http;
 
 class ProductService {
 // URL ของ RESTful API
-  final String baseUrl = 'http://10.119.97.219:3000/api';
+  final String baseUrl = 'http://10.119.169.195:3000/api';
 // URL ของรูปภาพ
-  final String imageUrl = 'http://10.119.97.219:3000/images';
+  final String imageUrl = 'http://10.119.169.195:3000/images';
 //เพิ่มข้อมูลสินค้าใหม่
   Future<Map<String, dynamic>?> createProduct(
       File imageFile, String proname, double price) async {

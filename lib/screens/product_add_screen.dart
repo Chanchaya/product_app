@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:product_app1/screens/product_list_screen.dart';
 import '../services/product_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -87,7 +88,7 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ProductAddScreen()),
+                              builder: (context) => ProductListScreen()),
                         );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
