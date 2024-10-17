@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'product_add_screen.dart';
 import 'product_view_screen.dart';
-import '../services/product_service.dart';
+import '../../services/product_service.dart';
 
 class ProductListScreen extends StatefulWidget {
   const ProductListScreen({super.key});
@@ -12,20 +12,29 @@ class ProductListScreen extends StatefulWidget {
 
 class _ProductListScreenState extends State<ProductListScreen> {
   late Future<List<dynamic>> futureProduct;
+
   @override
   void initState() {
-// TODO: implement initState
-
     super.initState();
-    futureProduct = ProductService().fetchProducts();
+    futureProduct = _fetchProducts();
+  }
+
+  Future<List<dynamic>> _fetchProducts() async {
+    return await ProductService().fetchProducts();
+  }
+
+  void _refreshProducts() {
+    setState(() {
+      futureProduct = _fetchProducts();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('รายการข้อมูลรูปภาพ'),
-        backgroundColor: const Color.fromARGB(255, 255, 139, 7),
+        title: Text('รายการข้อมูลสินค้า'),
+        backgroundColor: Colors.amber,
       ),
       body: FutureBuilder<List<dynamic>>(
           future: futureProduct,
@@ -35,7 +44,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
             } else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text('ไม่พบรายการข้อมูลรูปภาพ'));
+              return Center(child: Text('ไม่พบรายการข้อมูลสินค้า'));
             } else {
               return ListView.builder(
                   itemCount: snapshot.data!.length,
@@ -58,13 +67,19 @@ class _ProductListScreenState extends State<ProductListScreen> {
             }
           }),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          // Navigate to the add product screen and wait for a result
+          final result = await Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => ProductAddScreen()),
           );
+
+          // If result is true, refresh the product list
+          if (result == true) {
+            _refreshProducts();
+          }
         },
-        tooltip: 'เพิ่มข้อมูลสมาชิกใหม่',
+        tooltip: 'เพิ่มข้อมูลสินค้าใหม่',
         child: const Icon(Icons.add),
       ),
     );

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:product_app1/screens/product_list_screen.dart';
-import '../services/product_service.dart';
+import '../../services/product_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
@@ -13,16 +12,13 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
   File? _image;
   final ImagePicker _picker = ImagePicker();
   final TextEditingController _pronameController = TextEditingController();
-
   final TextEditingController _priceController = TextEditingController();
   final ProductService _productService = ProductService();
 
   Future<void> _pickImage(ImageSource source) async {
-//ประกาศตัวแปร pickedFile สําหรับจัดเก็บไฟลgรูปภาพที่เลือก
     final pickedFile = await _picker.pickImage(source: source);
     if (pickedFile != null) {
       setState(() {
-//กําหนดให8ตัวแปร _image เก็บข8อมูลไฟลgรูปภาพที่อยูKในตัวแปร pickedFile
         _image = File(pickedFile.path);
       });
     }
@@ -40,7 +36,6 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-//แสดงรูปภาพที่เลือก
               SizedBox(
                   height: 150,
                   child: _image != null
@@ -69,36 +64,32 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
                 decoration: InputDecoration(labelText: 'ราคา'),
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
               ),
-              SizedBox(
-                height: 20,
-              ),
+              SizedBox(height: 20),
               ElevatedButton.icon(
-                  onPressed: () async {
-                    if (_image != null) {
-                      String proname = _pronameController.text;
-                      double price = double.parse(_priceController.text);
-//เรียกใช8 api เพื่อเพิ่มข8อมูลใหมK
-                      final upload = await _productService.createProduct(
-                          _image!, proname, price);
-//ตรวจสอบตัวแปร upload
-                      if (upload != null) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('สําเร็จ'),
-                        ));
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ProductListScreen()),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          backgroundColor: Color.fromARGB(255, 255, 149, 0),
-                          content: Text('ผิดพลาด'),
-                        ));
-                      }
+                onPressed: () async {
+                  if (_image != null) {
+                    String proname = _pronameController.text;
+                    double price = double.parse(_priceController.text);
+                    // เรียกใช้งาน API เพื่อเพิ่มข้อมูลใหม่
+                    final upload = await _productService.createProduct(
+                        _image!, proname, price);
+                    // ตรวจสอบการตอบกลับจาก API
+                    if (upload != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('สำเร็จ'),
+                      ));
+                      // ส่งค่ากลับไปที่ ProductListScreen
+                      Navigator.pop(context, true);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        backgroundColor: Colors.red,
+                        content: Text('ผิดพลาด'),
+                      ));
                     }
-                  },
-                  label: Text('บันทึกข้อมูล'))
+                  }
+                },
+                label: Text('บันทึกข้อมูล'),
+              )
             ],
           ),
         ),
