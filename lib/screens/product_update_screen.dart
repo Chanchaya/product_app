@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:product_app1/screens/product_add_screen.dart';
-import '../services/product_service.dart';
+import 'product_list_screen.dart';
+import '../../services/product_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
@@ -16,16 +16,15 @@ class _ProductUpdateScreenState extends State<ProductUpdateScreen> {
   File? _image;
   final ImagePicker _picker = ImagePicker();
   final TextEditingController _pronameController = TextEditingController();
-
   final TextEditingController _priceController = TextEditingController();
   final ProductService _productService = ProductService();
 
   Future<void> _pickImage(ImageSource source) async {
-//ประกาศตัวแปร pickedFile สําหรับจัดเก็บไฟลgรูปภาพที่เลือก
+    // ประกาศตัวแปร pickedFile สำหรับจัดเก็บไฟล์รูปภาพที่เลือก
     final pickedFile = await _picker.pickImage(source: source);
     if (pickedFile != null) {
       setState(() {
-//กําหนดให8ตัวแปร _image เก็บข8อมูลไฟลgรูปภาพที่อยูKในตัวแปร pickedFile
+        // กำหนดให้ตัวแปร _image เก็บข้อมูลไฟล์รูปภาพที่อยู่ในตัวแปร pickedFile
         _image = File(pickedFile.path);
       });
     }
@@ -33,15 +32,17 @@ class _ProductUpdateScreenState extends State<ProductUpdateScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    // ตั้งค่าข้อมูลเริ่มต้นสำหรับ TextField
+    _pronameController.text = widget.productData['proname'];
+    _priceController.text = widget.productData['price'].toString();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('แก้ไชข้อมูลสินค้าใหม่'),
+        title: Text('แก้ไขข้อมูลสินค้า'),
         backgroundColor: Colors.amber,
       ),
       body: SingleChildScrollView(
@@ -49,14 +50,17 @@ class _ProductUpdateScreenState extends State<ProductUpdateScreen> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-//แสดงรูปภาพที่เลือก
+              // แสดงรูปภาพที่เลือก
               SizedBox(
-                  height: 150,
-                  child: _image != null
-                      ? Image.file(_image!)
-                      : Image.network(ProductService().imageUrl +
-                          "/" +
-                          widget.productData['image'])),
+                height: 150,
+                child: _image != null
+                    ? Image.file(_image!)
+                    : Image.network(
+                        ProductService().imageUrl +
+                            "/" +
+                            widget.productData['image'],
+                      ),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -80,67 +84,94 @@ class _ProductUpdateScreenState extends State<ProductUpdateScreen> {
                 decoration: InputDecoration(labelText: 'ราคา'),
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
               ),
-              SizedBox(
-                height: 20,
+              SizedBox(height: 20),
+              ElevatedButton.icon(
+                onPressed: () async {
+                  String proname = _pronameController.text;
+                  double? price = double.tryParse(_priceController.text);
+
+                  if (price == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      backgroundColor: Colors.red,
+                      content: Text('กรุณากรอกราคาที่เป็นตัวเลข'),
+                    ));
+                    return;
+                  }
+
+                  // ตรวจสอบว่า _image มีค่าหรือไม่ ถ้าไม่มีให้ใช้รูปภาพเดิมจาก widget.productData['image']
+                  final upload = await _productService.updateProduct(
+                    widget.productData['proId'],
+                    _image ?? File(widget.productData['image']),
+                    proname,
+                    price,
+                  );
+
+                  if (upload != null) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('แก้ไขข้อมูลสำเร็จ'),
+                    ));
+                    // กลับไปยังหน้าแสดงรายการสินค้า
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                          builder: (context) => ProductListScreen()),
+                      (Route<dynamic> route) => false,
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      backgroundColor: Colors.red,
+                      content: Text('การแก้ไขข้อมูลล้มเหลว'),
+                    ));
+                  }
+                },
+                icon: Icon(Icons.save),
+                label: Text('แก้ไขข้อมูล'),
               ),
-
-// แก้ไขข้อมูล
               ElevatedButton.icon(
-                  onPressed: () async {
-                    if (_image != null) {
-                      String proname = _pronameController.text;
-                      double price = double.parse(_priceController.text);
-//เรียกใช8 api เพื่อเพิ่มข8อมูลใหมK
-                      final upload = await _productService.updateProduct(
-                          widget.productData['proId'], _image!, proname, price);
-//ตรวจสอบตัวแปร upload
-                      if (upload != null) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('สําเร็จ'),
-                        ));
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ProductAddScreen()),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          backgroundColor: Color.fromARGB(255, 255, 149, 0),
-                          content: Text('ผิดพลาด'),
-                        ));
-                      }
-                    }
-                  },
-                  label: Text('แก้ไขข้อมูล')),
+                onPressed: () async {
+                  // ยืนยันการลบ
+                  final confirmDelete = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text('ยืนยันการลบ'),
+                      content: Text('คุณต้องการลบสินค้านี้หรือไม่?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: Text('ยกเลิก'),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(true),
+                          child: Text('ยืนยัน'),
+                        ),
+                      ],
+                    ),
+                  );
 
-// ลบข้อมูล
-              ElevatedButton.icon(
-                  onPressed: () async {
-                    if (_image != null) {
-                      String proname = _pronameController.text;
-                      double price = double.parse(_priceController.text);
-//เรียกใช8 api เพื่อเพิ่มข8อมูลใหมK
-                      final upload = await _productService
-                          .deleteProduct(widget.productData['proId']);
-//ตรวจสอบตัวแปร upload
-                      if (upload != null) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('สําเร็จ'),
-                        ));
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ProductAddScreen()),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          backgroundColor: Color.fromARGB(255, 255, 149, 0),
-                          content: Text('ผิดพลาด'),
-                        ));
-                      }
+                  if (confirmDelete == true) {
+                    // เรียกใช้เมธอดลบจาก ProductService
+                    final result = await _productService
+                        .deleteProduct(widget.productData['proId']);
+                    if (result) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('ลบสินค้าสำเร็จ'),
+                      ));
+                      // กลับไปยังหน้ารายการสินค้า
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                            builder: (context) => ProductListScreen()),
+                        (Route<dynamic> route) => false,
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        backgroundColor: Colors.red,
+                        content: Text('การลบล้มเหลว'),
+                      ));
                     }
-                  },
-                  label: Text('ลบข้อมูล'))
+                  }
+                },
+                icon: Icon(Icons.delete),
+                label: Text('ลบข้อมูล'),
+              ),
             ],
           ),
         ),

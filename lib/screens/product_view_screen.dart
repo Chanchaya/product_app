@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:product_app1/screens/product_update_screen.dart';
-import '../services/product_service.dart';
+import 'product_update_screen.dart';
+import '../../services/product_service.dart';
 
 class ProductViewScreen extends StatelessWidget {
   final Map productData;
@@ -10,8 +10,8 @@ class ProductViewScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('รายละเอียดรูปภาพ'),
-        backgroundColor: Color.fromARGB(255, 255, 147, 7),
+        title: Text('รายละเอียดสินค้า'),
+        backgroundColor: Colors.amber,
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
