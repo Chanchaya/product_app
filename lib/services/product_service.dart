@@ -66,8 +66,8 @@ class ProductService {
   Future<Map<String, dynamic>?> updateProduct(
       int proId, File image, String proname, double price) async {
     // ตรวจสอบว่าไฟล์รูปภาพมีอยู่จริงหรือไม่
-    if (!image.existsSync()) {
-      throw Exception('ไฟล์รูปภาพไม่พบ');
+    if (!await image.exists()) {
+      throw Exception('ไฟล์รูปภาพไม่พบ: ${image.path}');
     }
 
     var request = http.MultipartRequest(
