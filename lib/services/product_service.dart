@@ -4,9 +4,9 @@ import 'package:http/http.dart' as http;
 
 class ProductService {
   // URL ของ RESTful API
-  final String baseUrl = 'http://10.119.169.179:3000/api';
+  final String baseUrl = 'http://10.119.107.190:3000/api';
   // URL ของรูปภาพ
-  final String imageUrl = 'http://10.119.169.179:3000/images';
+  final String imageUrl = 'http://10.119.107.190:3000/images';
 
   // เพิ่มข้อมูลสินค้าที่ใหม่
   Future<Map<String, dynamic>?> createProduct(
@@ -64,10 +64,10 @@ class ProductService {
 
   // แก้ไขข้อมูลสินค้าด้วยการอัปเดต
   Future<Map<String, dynamic>?> updateProduct(
-      int proId, File image, String proname, double price) async {
+      int proId, File imageFile, String proname, double price) async {
     // ตรวจสอบว่าไฟล์รูปภาพมีอยู่จริงหรือไม่
-    if (!await image.exists()) {
-      throw Exception('ไฟล์รูปภาพไม่พบ: ${image.path}');
+    if (!imageFile.existsSync()) {
+      throw Exception('ไฟล์รูปภาพไม่พบ');
     }
 
     var request = http.MultipartRequest(
@@ -83,7 +83,7 @@ class ProductService {
 
     // เพิ่มไฟล์รูปภาพไปในการร้องขอ
     request.files.add(
-      await http.MultipartFile.fromPath('image', image.path),
+      await http.MultipartFile.fromPath('image', imageFile.path),
     );
 
     try {

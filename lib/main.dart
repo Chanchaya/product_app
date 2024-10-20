@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:product_app1/screens/my_profile_screen.dart';
+import 'package:product_app1/screens/home_screen.dart';
+import 'package:product_app1/screens/login_screen.dart';
 import 'package:product_app1/screens/product_list_screen.dart';
 
 void main() {
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: MyProfileScreen(),
+      home: LoginScreen(),
     );
   }
 }
