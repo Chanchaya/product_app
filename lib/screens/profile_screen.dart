@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:product_app1/screens/product_list_screen.dart';
 import '../services/api_service.dart';
 import 'login_screen.dart';
 import 'edit_profile_screen.dart';
@@ -44,14 +45,26 @@ class ProfileScreen extends StatelessWidget {
                         builder: (context) => EditProfileScreen(user: user)),
                   );
                 },
-                child: Text('Edit Profile'),
+                child: Text('แก้ไขโปรไฟล์'),
               ),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () => _deleteAccount(context),
-                child: Text('Delete Account'),
+                child: Text('ลบบัญชี'),
                 // style: ElevatedButton.styleFrom(primary: Colors.red),
               ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  // คลิกแล้วไปที่หน้ารายการสินค้า
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ProductListScreen()),
+                  );
+                },
+                child: Text('รายการเมนูอาหาร'),
+              )
             ],
           ),
         ),

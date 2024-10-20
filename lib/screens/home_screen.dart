@@ -57,7 +57,7 @@ class HomeScreen extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 textStyle: const TextStyle(fontSize: 18),
               ),
-              child: const Text('ไปที่รายการสินค้า'),
+              child: const Text('ไปที่รายการเมนูอาหาร'),
             ),
           ],
         ),

@@ -28,7 +28,7 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('เพิ่มข้อมูลสินค้ามใหม่'),
+        title: Text('เพิ่มเมนูอาหาร'),
         backgroundColor: Colors.amber,
       ),
       body: SingleChildScrollView(
@@ -57,7 +57,7 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
               ),
               TextField(
                 controller: _pronameController,
-                decoration: InputDecoration(labelText: 'ชื่อสินค้าม'),
+                decoration: InputDecoration(labelText: 'ชื่อสินค้า'),
               ),
               TextField(
                 controller: _priceController,

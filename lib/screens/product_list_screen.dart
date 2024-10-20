@@ -33,7 +33,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('รายการข้อมูลสินค้า'),
+        title: Text('รายการเมนูอาหาร'),
         backgroundColor: Colors.amber,
       ),
       body: FutureBuilder<List<dynamic>>(
@@ -44,7 +44,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
             } else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text('ไม่พบรายการข้อมูลสินค้า'));
+              return Center(child: Text('ไม่พบรายการเมนูอาหาร'));
             } else {
               return ListView.builder(
                   itemCount: snapshot.data!.length,
@@ -79,7 +79,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
             _refreshProducts();
           }
         },
-        tooltip: 'เพิ่มข้อมูลสินค้าใหม่',
+        tooltip: 'เพิ่มเมนูอาหาร',
         child: const Icon(Icons.add),
       ),
     );
